@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <!-- Favicons -->
+    <link href="/img/logo.png" rel="icon">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-fileinput/fileinput.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/css/bootstrap-fileinput/themes/explorer-fas/theme.css" rel="stylesheet">
+
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap-fileinput/fileinput.js"></script>
+    <script src="/js/bootstrap-fileinput/themes/fas/theme.js"></script>
+    <script src="/js/bootstrap-fileinput/themes/explorer-fas/theme.js"></script>
+    <script src="/js/bootstrap-fileinput/locales/zh.js"></script>
+    <script src="/js/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/js/bootbox.min.js"></script>
+    <style>
+    </style>
+    <title>上传资源</title>
+    <script>
+        $(function(){
+            $("#uploadFile").fileinput({  //初始化上传控件
+                language: 'zh',
+                uploadUrl: '/admin/upload_resources',
+                uploadExtraData: function () {   //以函数形式传，不要直接写JSON格式
+                    return {'itemId': $("#uploadItems").val()};
+                },
+                showCaption: true,          // 显示文件文本框
+//                dropZoneEnabled: false,    // 是否可拖拽
+//                uploadLabel: '上传附件',    // 上传按钮内容
+//                browseLabel: '选择附件',    // 浏览按钮内容
+                hideThumbnailContent: true, // 是否隐藏文件内容
+                allowedFileExtensions: ['txt', 'csv', 'zip', 'rar'],
+                textEncoding: 'utf-8',
+                maxFileCount: 1,
+                minFileCount: 1,
+                maxFileSize: 20000,  //单位KB，20M
+//                minFileSize: 1,
+                fileActionSettings: {                                // 在预览窗口中为新选择的文件缩略图设置文件操作的对象配置
+                    showRemove: true,                                 // 显示删除按钮
+                    showUpload: true,                                // 显示上传按钮
+                    showDownload: false,                             // 显示下载按钮
+                    showZoom: false,                                   // 显示预览按钮
+                    showDrag: false,                                   // 显示拖拽
+                    removeIcon: '<i class="fa fa-trash"></i>',      // 删除图标
+                    uploadIcon: '<i class="fa fa-upload"></i>',      // 上传图标
+                    uploadRetryIcon: '<i class="fa fa-repeat"></i>'  // 重试图标
+                }
+            }).on("fileclear", function(event, data, msg){
+
+            }).on("fileuploaded", function(event, data, previewId, index) {
+
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container" style="margin-top: 50px;min-height: 800px;">
+    <div class="card">
+        <div class="card-header">
+            <span style="color: #ff0000"><strong>* 请先选择上传项目</strong></span>
+        </div>
+        <div class="card-body">
+            <div>
+                <div class="form-group">
+                    <label for="uploadItems">上传项目:</label>
+                    <select class="form-control" id="uploadItems">
+                        <option value="0" selected>评论语料</option>
+                        <option value="1">Word2Vec模型</option>
+                        <option value="2">LSTM模型</option>
+                    </select>
+                </div>
+            </div>
+            <div id="upload_resource">
+                <div id="file_pane">
+                    <form id="fileForm" enctype="multipart/form-data">
+                        <input type="file" class="file-loading" id="uploadFile" name="file" data-theme="fas">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <strong>* 建议打包上传文件!!!</strong>
+        </div>
+    </div>
+</div>
+</body>
+</html>

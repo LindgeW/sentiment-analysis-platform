@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>词云图</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/echarts.js"></script>
+    <script src="js/echarts-wordcloud.js"></script>
+
+    <script>
+        $(function(){
+            var chart = echarts.init(document.getElementById('cloud'));
+            var chartData = [];
+//            $.ajax({
+//                url: '/word_cloud',
+//                type: 'POST',
+//                dataType: 'json',
+//                beforeSend: function(){
+//                    chart.showLoading();
+//                },
+//                success: function (data) {
+//                    chart.hideLoading();
+//                },
+//                error: function () {
+//                    alert('error!');
+//                }
+//            });
+
+            options = {
+                title: {
+                    text: '词云',//标题
+                    x: 'center',
+                    textStyle: {
+                        fontSize: 23
+                    }
+                },
+                backgroundColor: '#F7F7F7',
+                tooltip: {
+                    show: true
+                },
+                toolbox: {
+                    right:'5%',
+                    feature: {
+                        dataView: {readOnly: true},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                series: [{
+                    type: 'wordCloud',
+                    shape: 'circle',
+                    left: 'center',
+                    top: 'center',
+                    width: '70%',
+                    height: '80%',
+                    right: null,
+                    bottom: null,
+                    sizeRange: [12, 60],
+                    rotationRange: [-90, 90],
+                    rotationStep: 45,
+                    gridSize: 8,
+                    drawOutOfBound: false,
+                    textStyle: {
+                        normal: {
+                            fontFamily: 'sans-serif',
+                            fontWeight: 'bold',
+                            // Color can be a callback function or a color string
+                            color: function () {
+                                // Random color
+                                return 'rgb(' + [
+                                            Math.round(Math.random() * 160),
+                                            Math.round(Math.random() * 160),
+                                            Math.round(Math.random() * 160)
+                                        ].join(',') + ')';
+                            }
+                        },
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    // Data is an array. Each array item must have name and value property.
+                    data: chartData
+                }],
+                graphic: {
+                    elements: [{
+                        type: 'image',
+                        style: {
+                            image: "img/cloud.png",
+                            width: 480,
+                            height: 293,
+                            opacity: 0.3
+                        },
+                        right: 'center',
+                        bottom: '18%'
+                    }]
+                }
+            };
+
+//            options.data = [{
+//                name: "LINDA",
+//                value: 399
+//            },{
+//                name: "Fighting!",
+//                value: 280
+//            }];
+
+            chartData.push({
+                name: "Farrah Abraham",
+                value: 366
+            },{
+                name: "baidu",
+                value: 399
+            },{
+                name: "come on!",
+                value: 280
+            },{
+                name: "see you!",
+                value: 349
+            });
+
+            chart.setOption(options);
+        });
+    </script>
+
+</head>
+<body>
+    <div id="cloud" style="width: 500px; height: 500px; border: dashed red 1px"></div>
+</body>
+</html>

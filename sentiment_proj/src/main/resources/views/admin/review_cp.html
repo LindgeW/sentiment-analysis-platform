@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <!-- Favicons -->
+    <link href="/img/logo.png" rel="icon">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-table/bootstrap-table.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet" crossorigin="anonymous">
+
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="/js/export/bootstrap-table-export.js"></script>
+    <script src="/js/export/tableExport.js"></script>
+    <script src="/js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="/js/bootbox.min.js"></script>
+
+    <title>评论汇总</title>
+    <script>
+        var urls = new Array(0);
+        urls['list'] = '/admin/get_remarks';
+        urls['updateOne'] = '/admin/update_one';
+        urls['updateMany'] = '/admin/update_remarks';
+        urls['delOne'] = '/admin/del_one';
+        urls['delMany'] = '/admin/del_remarks';
+
+        $(function() {
+            load();
+
+            var $table = $("#table");
+            $("#edit").click(function () {
+                //$.map()函数用于使用指定函数处理数组中的每个元素(或对象的每个属性)，并将处理结果封装为新的数组返回
+                var rows = $.map($table.bootstrapTable('getSelections'), function (row) {
+                    return row;
+                });
+                editRows(rows);
+            });
+
+            $("#del").click(function () {
+//          var len = $table.bootstrapTable('getData').length;
+                //$.map()函数用于使用指定函数处理数组中的每个元素(或对象的每个属性)，并将处理结果封装为新的数组返回
+                var rows = $.map($table.bootstrapTable('getSelections'), function (row) {
+                    return row;
+                });
+                delRows(rows);
+            });
+        });
+
+        function load(){
+            $("#table").bootstrapTable({
+                url: urls['list'],
+                method: 'POST',
+                cache: false,  //禁用缓存
+                toolbar: '#toolbar',  //工具按钮用哪个容器
+                pagination: true,  //是否显示分页
+                sidePagination: "client", //server
+                sortable: true,  //是否启用排序
+                sortOrder: "asc", //排序方式
+                pageNumber: 1, //初始化加载第一页
+                pageSize: 5, //每页的记录行数
+                pageList: [5, 10, 15, 20], //可供选择的每页的行数
+                search: true, //是否显示表格搜索（模糊）
+                strictSearch: false,  //完全匹配
+                showExport: true,
+                exportDataType: "all",
+                exportTypes: ["csv", "txt", "excel"],
+                exportOptions:{
+                    ignoreColumn: [0],  //忽略某一列的索引
+                    fileName: '评论数据'  //文件名称设置
+                },
+                showColumns: true, //是否显示所有的列（选择显示的列）
+                showRefresh: true, //是否显示刷新按钮
+                uniqueId: "id",  //每一行的唯一标识，一般为主键列
+                contentType: "application/x-www-form-urlencoded",
+                minimumCountColumns: 2,             //最少允许的列数
+                clickToSelect: true,  //点击选中行
+                showToggle: true,  //是否显示详细视图和列表视图的切换按钮
+                smartDisplay: true, // 智能显示 pagination 和 cardview 等
+                cardView: false,  //是否显示详细视图
+                detailView: false, //是否显示父子表
+                queryParams: function queryParams(params) { //设自定义查询参数
+                    var params = {
+                        limit: params.limit,   //页面大小
+                        offset: params.offset  //页码
+                    };
+                    return params;
+                },
+                columns:[
+                    {checkbox: true},
+                    {title: '序号', align: 'center', formatter: function (value, row, index) {
+                        return index + 1;
+//                        var pageSize = $table.bootstrapTable('getOptions').pageSize;     //每页多少条
+//                        var pageNumber = $table.bootstrapTable('getOptions').pageNumber; //当前第几页
+//                        alert(pageSize+" "+pageNumber+" "+index);
+//                        return pageSize * (pageNumber - 1) + index + 1;    // 返回每条的序号：每页条数 *（当前页 - 1 ）+ 序号
+                    }},
+                    {field: 'id', title: 'ID', visible: false},
+                    {field: 'content', title: '评论', sortable: true, formatter: function (value, row, index) {
+                        var topLen = 300;
+                        if(value.length > topLen){
+                            return value.substr(0, topLen) + "...";
+                        }else{
+                            return value;
+                        }
+                    }},
+                    {field: 'emotion', title: '极性', sortable: true, align: 'center', edit:true},
+//                    {field: 'imgUrl', title: 'url', visible: false}
+                    {title: '编辑', formatter: function(value, row, index){
+                        //HTML中函数对象传递只能转为JSON来传
+                        var jsonObj = JSON.stringify(row).replace(/"/g, '&quot;'); //将所有"替换成&quot;
+                        return '<a href="#" class="btn btn-xs btn-info tableEditor" onclick="editOne(' + jsonObj + ')"><i class="far fa-edit"></i></a>';
+                    }},
+                    {title: '删除', formatter: function(value, row, index){
+                        var jsonObj = JSON.stringify(row).replace(/"/g, '&quot;'); //将所有"替换成&quot;
+                        return '<a href="#" class="btn btn-xs btn-danger tableDelete" onclick="delOne('+ jsonObj + ')"><i class="fas fa-trash-alt"></i></a>';
+                    }}
+                ],
+                formatLoadingMessage: function () {
+                    return "请稍等，正在加载中...";
+                },
+                formatNoMatches: function () {
+                    return '无符合条件的记录';
+                },
+                onLoadSuccess: function () {
+//                    showTips("数据加载成功！");
+                },
+                onLoadError: function () {
+                    bootbox.alert({
+                        title: '错误',
+                        className: 'rubberBand animated',
+                        message: '数据加载失败！'
+                    });
+                }
+            });
+        }
+
+        function refresh(){
+            $("#table").bootstrapTable('refresh', {url: urls['list']});
+        }
+
+        function editOne(row){
+            bootbox.prompt({
+                title: "编辑极性",
+                size: 'large',
+                message: '<p>请选择正确的极性值:</p>',
+                inputType: 'radio',
+                inputOptions: [
+                    {
+                        text: '积极',
+                        value: 'pos'
+                    },
+                    {
+                        text: '中立',
+                        value: 'gen'
+                    },
+                    {
+                        text: '消极',
+                        value: 'neg'
+                    }
+                ],
+                callback: function (result) {
+                    if(result == null){
+                        return;
+                    }
+                    row.emotion = result;
+                    editSave(row, urls['updateOne']);
+                }
+            });
+        }
+
+        function editRows(rows){
+            if (rows.length < 1) {
+                bootbox.alert({
+//                        title: "提示",
+                    className: 'rubberBand animated',
+                    backdrop: true,
+                    message: "请选择编辑行!"
+                });
+                return;
+            }
+            bootbox.prompt({
+                title: "编辑极性",
+                size: 'large',
+                message: '<p>请选择正确的极性值:</p>',
+                inputType: 'radio',
+                inputOptions: [
+                    {
+                        text: '积极',
+                        value: 'pos'
+                    },
+                    {
+                        text: '中立',
+                        value: 'gen'
+                    },
+                    {
+                        text: '消极',
+                        value: 'neg'
+                    }
+                ],
+                callback: function (result) {
+                    if(result == null){
+                        return;
+                    }
+                    $.each(rows, function(idx, item){
+                        rows[idx].emotion = result;
+                    });
+                    editSave(rows, urls['updateMany']);
+                }
+            });
+        }
+
+
+        function editSave(rows, url){
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: JSON.stringify(rows),
+                contentType: "application/json;charset=utf-8",
+                success: function(data, status) {
+                    if (status == 'success') {
+                        refresh();
+                    }
+                },
+                error: function(){
+                    alert('error');
+                }
+            });
+        }
+
+        function delRows(rows){
+            if (rows.length < 1) {
+                bootbox.alert({
+                    title: "提示",
+                    className: 'rubberBand animated',
+                    message: "请选择一行删除!"
+                });
+                return;
+            }
+            bootbox.confirm({
+                message: "确定删除所选记录吗?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function(result){
+                    /* result is a boolean; true = OK, false = Cancel*/
+                    if(result){
+                        $("#table").bootstrapTable('remove', {
+                            field: 'id',
+                            values: rows //数组
+                        });
+                        delSave(rows, urls['delMany']);
+                    }
+                }
+            });
+        }
+
+        function delOne(row){
+            bootbox.confirm({
+                message: "确定删除该记录吗?",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function(result){
+                    /* result is a boolean; true = OK, false = Cancel*/
+                    if(result){
+                        $("#table").bootstrapTable('remove', {
+                            field: 'id',
+                            values: [row] //数组
+                        });
+                        delSave(row, urls['delOne']);
+                    }
+                }
+            });
+        }
+
+        function delSave(rows, url){
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: JSON.stringify(rows),
+                contentType: "application/json;charset=utf-8",
+                success: function(data, status) {
+                    if (status == 'success') {
+                        refresh();
+                    }
+                },
+                error: function(){
+                    alert('error');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar navbar-expand-md bg-light navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="/img/logo.png" alt="Logo" style="width:64px;">
+                    <span class="navbar-text">电商评论情感分析平台SAP</span>
+                </a>
+                <!-- Toggler/collapsibe Button -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">首页</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/parse">在线演示</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">在线文档</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">常见问题</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">下载</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Github</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/logout">安全退出</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="breadcrumb" style="background-color: #4e555b;color: #fff;padding: 25px 0;margin-bottom: 50px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-4 ">
+                    <h2>评论管理</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: 50px; margin-bottom: 50px; min-height:600px;">
+        <div id="toolbar" class="btn-group">
+            <button id="edit" class="btn btn-light" title="添加">
+                <i class="fas fa-edit"></i> 编辑
+            </button>
+            <button id="del" class="btn btn-light" title="删除">
+                <i class="fas fa-minus"></i> 删除
+            </button>
+            <!--<button id="export" class="btn btn-light" title="导出">-->
+                <!--<i class="fas fa-file-download"></i> <a href="/export_from_db" style="text-decoration: none; color: #383d41">导出</a>-->
+            <!--</button>-->
+        </div>
+        <div id="table" data-mobile-responsive="true">
+        </div>
+    </div>
+
+    <footer class="footer" style="background-color: #2a2c30;">
+        <div class="copyrights" style="text-align: center;padding: 30px;color: #fff">
+            <div class="container">
+                <p>&copy; Copyrights SAP. All rights reserved.</p>
+                <div class="credits">
+                    Designed by 南昌大学软件学院吴林志
+                </div>
+                <p>(请使用IE9或更高版本的浏览器访问该系统)</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

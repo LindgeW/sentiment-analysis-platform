@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>设置服务器IP</title>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootbox.min.js"></script>
+    <style>
+        input[type="text"] {
+            font-size: 20px;
+        }
+
+    </style>
+    <script>
+        function test(){
+            var isPass = checkFields();
+            if(!isPass){
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/test_conn",
+                data: $("#hostForm").serialize(),
+                success: function(data){
+                    if(data.code == 200){
+                        bootbox.alert({
+                            title: '消息',
+                            className: 'rubberBand animated',
+                            message: '成功连接到服务器！'
+                        });
+                    }else{
+                        bootbox.alert({
+                            title: '错误',
+                            className: 'rubberBand animated',
+                            message: '无法连接到服务器！'
+                        });
+                    }
+                },
+                error: function(){
+                    bootbox.alert({
+                        title: '错误',
+                        className: 'rubberBand animated',
+                        message: '无法连接到服务器！'
+                    });
+                }
+            });
+        }
+
+        function Submit(){
+            var isPass = checkFields();
+            if(isPass){
+                $("#hostForm").submit();
+            }
+        }
+
+        function checkFields(){
+            var ip = $("#ip").val();
+            var port = $("#port").val();
+            if(ip == '' || port == ''){
+                bootbox.alert({
+                    title: '错误',
+                    className: 'rubberBand animated',
+                    message: 'IP地址或端口不能为空！'
+                });
+                return false;
+            }
+
+            var ipExp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+            var portExp = /^([0-9]|[1-9]\d|[1-9]\d{2}|[1-9]\d{3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/;
+//            var reg = ip.match(exp);
+            if(!ipExp.test(ip)){
+                $("#ip").select();
+                bootbox.alert({
+                    title: '错误',
+                    className: 'rubberBand animated',
+                    message: 'IP地址不合法！'
+                });
+                return false;
+            }
+            if(!portExp.test(port)){
+                $("#port").select();
+                bootbox.alert({
+                    title: '错误',
+                    className: 'rubberBand animated',
+                    message: '端口不合法！'
+                });
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div class="container" style="padding-top:50px; min-height: 500px;">
+        <form id="hostForm" action="/admin/set_host" method="post">
+            <div class="form-group">
+                <label for="ip">IP:</label>
+                <!--<select name="ip" class="form-control" id="ip">-->
+                    <!--<option value="127.0.0.1">127.0.0.1</option>-->
+                <!--</select>-->
+                <input type="text" name="ip" th:value="${host.ip}" onchange="checkIP()" class="form-control" id="ip">
+            </div>
+            <div class="form-group">
+                <label for="port">端口:</label>
+                <input type="text" name="port" th:value="${host.port}" class="form-control" id="port">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="Submit()">修  改</button>
+            <button type="button" class="btn btn-primary" onclick="test()">连接测试</button>
+        </form>
+        <p>
+        <div th:if="${status == 'success'}">
+            <div class="alert alert-success alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>修改成功!</strong>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <title>首页</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <!-- Favicons -->
+    <link href="/img/logo.png" rel="icon">
+    <!--<link href="/img/logo.png" rel="apple-touch-icon">-->
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Poppins:300,400,500,700" rel="stylesheet">
+    <!-- Bootstrap CSS File -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Libraries CSS Files -->
+    <link href="/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/animate/animate.min.css" rel="stylesheet">
+    <!-- Main Stylesheet File -->
+    <link href="/css/home_style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!--==========================
+  Header
+  ============================-->
+  <header id="header">
+    <div class="container">
+
+      <div id="logo" class="pull-left">
+        <!-- <a href="#hero"><img src="img/logo.png" alt="" title="" /></img></a> -->
+        <h1><a href="#hero">在线情感分析平台</a></h1>
+      </div>
+
+      <nav id="nav-menu-container">
+        <ul class="nav-menu">
+          <li class="menu-active"><a href="#hero">首页</a></li>
+          <li><a href="#about">简介</a></li>  <!-- 关于系统 -->
+          <li><a href="/user/parse">在线演示</a></li>
+            <li><a href="/user/docs">使用文档</a></li>
+            <li><a href="/user/download">下载</a></li>
+          <li><a href="https://github.com/ncuwlz/Graduate-Design" target="_blank">Github</a></li>
+        </ul>
+      </nav><!-- #nav-menu-container -->
+    </div>
+  </header><!-- #header -->
+
+  <!--==========================
+    Hero Section
+  ============================-->
+  <section id="hero">
+    <div class="hero-container">
+      <h1>Welcome to ecc-SAP</h1>
+      <h2>基于LSTM的中文电商评论情感分析平台</h2>
+      <a href="#about" class="btn-get-started">开  始</a>
+    </div>
+  </section><!-- #hero -->
+
+  <main id="main">
+
+    <!--==========================
+      About Us Section
+    ============================-->
+    <section id="about">
+      <div class="container">
+        <div class="row about-container">
+          <div class="col-lg-6 content order-lg-1 order-2">
+            <h2 class="title">系统简介</h2>
+            <p>
+                情感分析(Sentiment analysis)是自然语言处理(NLP)领域的一个任务，
+                又称倾向性分析，意见抽取(Opinion extraction)，意见挖掘(Opinion mining)，
+                情感挖掘(Sentiment mining)，主观分析(Subjectivity analysis)等，
+                它是对带有情感色彩的主观性文本进行分析、处理、归纳和推理的过程，
+                如从商品评论文本中分析用户对商品的的评价(positive、negative、neutral).
+                该平台由Bootstrap4 + jQuery3 + Flask搭建，仅限于电商文本评论的情感分析!
+            </p>
+
+            <div class="icon-box wow fadeInUp">
+              <div class="icon"><i class="fa fa-shopping-bag"></i></div>
+              <h4 class="title"><a href="">开源</a></h4>
+              <p class="description">
+                  本平台对线上用户完全开源，用户具有免费学习和使用该平台的权利，本平台为您提供了优质的服务和资源，让您零距离体验AI！
+              </p>
+            </div>
+
+            <div class="icon-box wow fadeInUp" data-wow-delay="0.2s">
+              <div class="icon"><i class="fa fa-photo"></i></div>
+              <h4 class="title"><a href="">方便</a></h4>
+              <p class="description">
+                  用户只需输入评论文本或上传文本文件，本平台将会该你反馈给您想要的答案.
+                  为了方便使用，平台提供参考文档和源码供你学习和使用！
+              </p>
+            </div>
+
+            <div class="icon-box wow fadeInUp" data-wow-delay="0.4s">
+              <div class="icon"><i class="fa fa-bar-chart"></i></div>
+              <h4 class="title"><a href="">高效</a></h4>
+              <p class="description">
+                  系统底层由深度学习技术和自然语言处理(NLP)技术支持，
+                  旨在为用户打造一款高效、可行的服务型平台!
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-6 background order-lg-2 order-1 wow fadeInRight"></div>
+        </div>
+
+      </div>
+    </section><!-- #about -->
+  </main>
+
+  <!--==========================
+    Footer
+  ============================-->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong>NCU</strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        Designed by 南昌大学软件学院吴林志
+      </div>
+    </div>
+  </footer><!-- #footer -->
+
+  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+  <!-- JavaScript Libraries -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <script src="/js/jquery-migrate.min.js"></script>
+  <!--<script src="/js/bootstrap.min.js"></script>-->
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/easing/easing.min.js"></script>
+  <script src="/js/wow/wow.min.js"></script>
+  <script src="/js/waypoints/waypoints.min.js"></script>
+  <script src="/js/counterup/counterup.min.js"></script>
+  <script src="/js/superfish/hoverIntent.js"></script>
+  <script src="/js/superfish/superfish.min.js"></script>
+  <!-- Template Main Javascript File -->
+  <script src="/js/main.js"></script>
+</body>
+</html>

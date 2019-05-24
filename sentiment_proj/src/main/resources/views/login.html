@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>登录</title>
+    <link href="/img/logo.png" rel="icon">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet" type="text/css"/>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+    <script src="/js/messages_zh.min.js"></script>
+    <script src="/js/bootbox.min.js"></script>
+    <script>
+        $(function () {
+            validateRule();
+        });
+
+        $.validator.setDefaults({
+            submitHandler: function() {
+                ajaxLogin();
+            }
+        });
+
+        function validateRule(){
+            $("#loginForm").validate({
+                rules: {
+                    username: {
+                        required: true,
+//                        minlength: 2
+                    },
+                    password: {
+                        required: true,
+//                        minlength: 5
+                    }
+                },
+                messages: {
+                    username: {
+                        required: " *请输入登录名 ",
+//                        minlength: "登录名长度太短！"
+                    },
+                    password: {
+                        required: " *请输入密码 ",
+//                        minlength: "密码长度太短"
+                    }
+                }
+            });
+        }
+
+        function ajaxLogin(){
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                cache: false,
+                data: $('#loginForm').serialize(),
+                dataType: "json",
+                success: function (data) {
+                    if(data.code == 200){
+                        window.location.href = data.data;
+                    }else{
+                        bootbox.alert({
+                            title: '错误',
+                            className: 'rubberBand animated',
+                            message: data.msg
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+    <style>
+        .error{
+            color:red;
+            font-size: 5px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="login_box">
+        <div class="login_l_img"><img src="/img/login_img.png"/></div>
+        <div class="login">
+            <div class="login_logo"><a href="#"><img src="/img/login_logo.png"/></a></div>
+            <div class="login_name">
+                <p>管理员登录</p>
+            </div>
+            <form id="loginForm">
+                <input name="username" type="text" id="username" value="admin" placeholder="用户名">
+                <input name="password" type="password" id="password" placeholder="密码"/>
+                <input value="登录" style="width:100%;" type="submit"/>
+            </form>
+        </div>
+        <div class="copyright">南昌大学软件学院吴林志 版权所有©2018-2019</div>
+    </div>
+</div>
+</body>
+</html>

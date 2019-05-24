@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <!-- Favicons -->
+  <link href="/img/logo.png" rel="icon">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet" crossorigin="anonymous">
+
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/bootstrap-table/bootstrap-table.min.js"></script>
+  <script src="/js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
+  <script src="/js/bootbox.min.js"></script>
+  <script src="/js/echarts.js"></script>
+  <script src="/js/echarts-wordcloud.js"></script>
+  <title>评论解析</title>
+  <script>
+    $(function(){
+        load_monitor_data();
+    });
+
+    function load_monitor_data(){
+        $.ajax({
+            type: "POST",
+            url: "/admin/monitor",
+            success: function(data){
+                showPie(data);
+                showBar(data);
+
+                $repeat = $("#repeat");
+                var rp = (1.0 * data['repeat'] / data['total']) * 100;
+                if(rp > 70){
+                    $repeat.attr("class", "badge badge-danger")
+                }else if(rp > 10) {
+                    $repeat.attr("class", "badge badge-warning")
+                }
+                $repeat.text(rp.toFixed(2))
+            },
+            error: function () {
+                bootbox.alert({
+                    title: '错误',
+                    message: '未知错误！！！'
+                });
+            }
+        });
+    }
+
+    function showPie(dict) {
+        var all = dict["total"];
+        $("#show_pie").highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            colors: ['#009900', '#FFFF00', '#CC0000'],
+            title: {
+                text: '极性比例'
+            },
+//            subtitle: {
+//                text: '极性分布情况'
+//            },
+            credits: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}%</b>: {point.percentage:.1f} %',
+                    },
+                    showInLegend: false
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'ratio',
+                data: [
+                    ['积极', dict['posNum']/all],
+                    ['中立', dict['genNum']/all],
+                    ['消极', dict['negNum']/all]
+                ]
+            }]
+        });
+    }
+
+    function showBar(dict) {
+        var total = dict['total'];
+        $("#show_bar").highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '极性频数 (total:'+total+')'
+            },
+//            subtitle: {
+//                text: '极性分布情况'
+//            },
+            xAxis: {
+                categories: ['极性']
+            },
+            yAxis: {
+                title: {
+                    text: '数量'
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [
+                {
+                    name: '积极',
+                    data: [dict['posNum']],
+                    color: '#009900'
+                },
+                {
+                    name: '中立',
+                    data: [dict['genNum']],
+                    color: '#FFFF00'
+                },
+                {
+                    name: '消极',
+                    data: [dict['negNum']],
+                    color: '#CC0000'
+                }
+            ]
+        });
+    }
+  </script>
+</head>
+<body>
+    <div class="container" style="margin-top: 100px;min-height: 1000px;">
+        <section class="section">
+            <div class="row ">
+                <div class="col-lg-12 col-xl-6 col-md-12 col-12 col-sm-12">
+                  <div class="card">
+                    <!--<div class="card-header">-->
+                      <!--<h4>频数统计</h4>-->
+                    <!--</div>-->
+                    <div class="card-body">
+                        <div id="show_bar" class="container" style="width: 500px; height: 500px;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-12 col-xl-6 col-md-12 col-12 col-sm-12">
+                  <div class="card">
+                    <!--<div class="card-header">-->
+                      <!--<h4>频率统计</h4>-->
+                    <!--</div>-->
+                    <div class="card-body">
+                        <div id="show_pie" class="container" style="width: 500px; height: 500px;"></div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="row">
+                <div class="col-12 col-sm-12">
+                    <div class="card">
+                        <!--<div class="card-header">-->
+                            <!--<h4>重复率</h4>-->
+                        <!--</div>-->
+                        <div class="card-body">
+                            <div>评论重复率：<span class="badge badge-success" id="repeat">0</span><strong>%</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

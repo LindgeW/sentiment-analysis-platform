@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <!-- Favicons -->
+    <link href="img/logo.png" rel="icon">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="css/bootstrap-fileinput/fileinput.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="css/bootstrap-fileinput/themes/explorer-fas/theme.css" rel="stylesheet">
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/bootstrap-fileinput/fileinput.js"></script>
+    <script src="js/bootstrap-fileinput/themes/fas/theme.js"></script>
+    <script src="js/bootstrap-fileinput/themes/explorer-fas/theme.js"></script>
+    <script src="js/bootstrap-fileinput/locales/zh.js"></script>
+    <script src="js/bootstrap-paginator.js"></script>
+    <script src="js/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="js/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="js/bootbox.min.js"></script>
+    <script src="js/echarts.js"></script>
+    <script src="js/echarts-wordcloud.js"></script>
+    <style>
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            display: none;
+            background: #71c55d;
+            line-height: 1;
+            color: #fff;
+            padding: 7px 12px 13px 12px;
+            font-size: 16px;
+            border-radius: 2px;
+            right: 15px;
+            bottom: 15px;
+            transition: background 0.5s;
+        }
+        .back-to-top:focus {
+            background: #71c55d;
+            color: #fff;
+            outline: none;
+        }
+        .back-to-top:hover {
+            background: #55b03f;
+            color: #fff;
+        }
+    </style>
+    <!--<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Roboto:100,300,400,500,700|Philosopher:400,400i,700,700i" rel="stylesheet">-->
+    <!--<link href="css/style.css" rel="stylesheet">-->
+    <title>评论解析</title>
+    <script>
+        $(function(){
+            var uploaded = false;
+            var value = 0;
+            var time = 100;
+            var st = null;
+
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 100) {
+                    $('.back-to-top').fadeIn('slow');
+                } else {
+                    $('.back-to-top').fadeOut('slow');
+                }
+            });
+            $('.back-to-top').click(function(){
+                $('html, body').animate({scrollTop : 0}, 1500);
+                return false;
+            });
+
+            $(".progress").hide();
+            $("#output_table").hide();
+
+            $("#parseBtn").click(function () {
+                if($('#text_pane').hasClass('active')){
+                    text_parse();
+                }else if($('#file_pane').hasClass('active')){
+                    file_parse();
+                }
+            });
+
+            function showPie() {
+                var posNum = 0, negNum = 0;
+                $.post("/bar_analysis", function (data, status) {
+                    if (status == 'success' && data.statusCode == 400) {
+                        posNum = data.respData.posNum;
+                        negNum = data.respData.negNum;
+                        $("#show_bar").highcharts({
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false
+                            },
+                            colors: ['#009900', '#CC0000'],
+                            title: {
+                                text: '极性统计'
+                            },
+                            subtitle: {
+                                text: '正负极性分布情况'
+                            },
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    showInLegend: true
+                                }
+                            },
+                            series: [{
+                                    type: 'pie',
+                                    name: 'ratio',
+                                    data: [
+                                        ['积极', posNum/(posNum+negNum)],
+                                        ['消极', negNum/(posNum+negNum)]
+                                    ]
+                                }]
+                        });
+                    }
+                });
+            }
+
+            function showBar() {
+                var posNum = 0, negNum = 0;
+                $.post("/bar_analysis", function (data, status) {
+                    if (status == 'success' && data.statusCode == 400) {
+                        posNum = data.respData.posNum;
+                        negNum = data.respData.negNum;
+                        genNum = data.respData.genNum;
+                        $("#show_bar").highcharts({
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: '极性统计'
+                            },
+                            subtitle: {
+                                text: '正负极性分布情况'
+                            },
+                            xAxis: {
+                                categories: ['极性']
+                            },
+                            yAxis: {
+                                title: {
+                                    text: '数目'
+                                }
+                            },
+                            credits: {
+                                enabled: false
+                            },
+                            series: [
+                                {
+                                    name: '积极',
+                                    data: [posNum],
+                                    color: '#009900'
+                                },
+                                {
+                                    name: '中立',
+                                    data: [genNum],
+                                    color: '#FFFF00'
+                                },
+                                {
+                                    name: '消极',
+                                    data: [negNum],
+                                    color: '#CC0000'
+                                }
+                            ]
+                        });
+                    }
+                });
+            }
+
+            function show_wordCloud(){
+                var chart = echarts.init(document.getElementById('show_cloud'));
+                $.ajax({
+                    url: '/word_cloud',
+                    type: 'POST',
+                    dataType: 'json',
+                    beforeSend: function(){
+                        chart.showLoading({text: '加载中请稍等...'});
+                    },
+                    success: function (data, status) {
+                        if(data.statusCode==400){
+                            var chartData = [];
+                            $.each(data.respData, function(index, item){
+                                var one = {};
+                                one.name = item.word;
+                                one.value = item.weight;
+                                chartData.push(one);
+                            });
+                            chart.setOption({
+//                                title: {
+//                                    text: '词云图',//标题
+//                                    x: 'center',
+//                                    textStyle: {
+//                                        fontSize: 25
+//                                    }
+//                                },
+                                backgroundColor: '#F7F7F7',
+                                tooltip: {
+                                    show: true
+                                },
+                                toolbox: {
+                                    right: '5%',
+                                    feature: {
+                                        dataView: {readOnly: true},
+                                        restore: {},
+                                        saveAsImage: {}
+                                    }
+                                },
+                                series: [{
+                                    type: 'wordCloud',
+                                    shape: 'circle',
+                                    left: 'center',
+                                    top: 'center',
+                                    width: '80%',
+                                    height: '80%',
+                                    right: null,
+                                    bottom: null,
+                                    sizeRange: [12, 60],
+                                    rotationRange: [-90, 90],
+                                    rotationStep: 45,
+                                    gridSize: 8,
+                                    drawOutOfBound: false,
+                                    textStyle: {
+                                        normal: {
+                                            fontFamily: 'sans-serif',
+                                            fontWeight: 'bold',
+                                            // Color can be a callback function or a color string
+                                            color: function () {
+                                                // Random color
+                                                return 'rgb(' + [
+                                                            Math.round(Math.random() * 160),
+                                                            Math.round(Math.random() * 160),
+                                                            Math.round(Math.random() * 160)
+                                                        ].join(',') + ')';
+                                            }
+                                        },
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowColor: '#333'
+                                        }
+                                    },
+                                    // Data is an array. Each array item must have name and value property.
+                                    data: chartData
+                                }],
+                                graphic: {
+                                    elements: [{
+                                        type: 'image',
+                                        style: {
+                                            image: "img/cloud.png",
+                                            width: 480,
+                                            height: 290,
+                                            opacity: 0.3
+                                        },
+                                        right: 'center',
+                                        bottom: '18%'
+                                    }]
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert('error!');
+                    },
+                    complete: function () {
+                        chart.hideLoading();
+                    }
+                });
+            }
+
+            function setPage(pageCurrent, pageSum) {
+                var options = {
+                    bootstrapMajorVersion: 4, //对应的bootstrap版本
+                    currentPage: pageCurrent, //当前页数
+                    numberOfPages: 5, //最多显示的页码数
+                    totalPages: pageSum, //所有数据能分的总页数
+                    alignment: "center",
+                    shouldShowPage: true, //是否显示该按钮
+                    useBootstrapTooltip: true,
+                    tooltipTitles: function (type, page) {
+                        switch (type) {
+                            case "first" :
+                                return "第一页";
+                            case "prev" :
+                                return "上一页";
+                            case "next" :
+                                return "下一页";
+                            case "last" :
+                                return "最后一页";
+                            case "page" :
+                                return page;
+                        }
+                        return "";
+                    },
+                    onPageClicked: function (event, originalEvent, type, page) {
+                        $.post("/fetch_page", {curPage: page}, function (data, status) {
+                            if (status == 'success' && data.statusCode == 400) {
+                                fill_table(data.respData.pageData, page);
+                            }
+                        });
+                    }
+                };
+                $("#myPaginator").bootstrapPaginator(options);
+            }
+
+            function skip(pageNo){ //跳转到指定页
+                $("#myPaginator").bootstrapPaginator("show", pageNo);
+            }
+
+            $("#uploadFile").fileinput({ //初始化上传控件
+                language: 'zh',
+                uploadUrl: '/file_upload',
+                uploadAsync: true,
+                enctype: 'multipart/form-data',
+                allowedFileExtensions: ['txt'],
+                textEncoding: 'utf-8',
+                maxFileCount: 1,
+                minFileCount: 1,
+                maxFileSize: 100, //单位KB
+                minFileSize: 1
+            }).on("fileclear", function(event, data, msg){
+                $.post("/clear_file");
+                uploaded = false;
+            }).on("fileuploaded", function(event, data, previewId, index) {
+                uploaded = true;
+            });
+
+            function increment(){
+                value += 1;
+                if(value>100 || (uploaded==false && value==99)){
+                    clearTimeout(st);
+                    return;
+                }
+
+                $("#prog").css("width", value+"%").text(value+"%");
+                st = setTimeout(increment, time);
+            }
+
+
+            function fill_table(datalist, curPage){
+                $("#t_body").empty(); //移除子元素
+                $.each(datalist, function(i, item){
+                    var pageId = (curPage - 1) * 5 + i + 1;
+                    var row = "<tr>" +
+                            "<td>"+pageId+"</td>" +
+                            "<td>"+item.content+"</td>" +
+                            "<td>"+item.emotion+"</td>" +
+                            "<td><img src='"+item.imgUrl+"' alt='表情图' style='width: 40px;'>" +
+                            "</td>" +
+                            "</tr>";
+                    $("#t_body").append(row);
+                });
+            }
+
+            function text_parse(){
+                var remark = $.trim($("#remarks").val());
+                if (remark == null || remark == ''){
+                    bootbox.alert({
+                        title: '警告',
+                        message: '评论内容不能为空！'
+                    });
+                    return;
+                }
+                $.ajax({
+                    url: "/text_parse",
+                    type: "POST",
+                    data: {"remarks": remark},
+                    dataType: "json",
+                    beforeSend: function () {
+                        $("#parseBtn").html('请稍等...');
+                        $("#parseBtn").attr("disabled", "disabled");
+                        $(".progress").show();
+                        increment();
+                    },
+                    success: function(data, status) {
+                        if (data.statusCode == 400){
+                            var totalPages = data.respData.totalPages;
+                            if(totalPages > 1){
+                                $("#myPaginator").show();
+                            }
+                            setPage(1, totalPages);
+                            fill_table(data.respData.pageData, 1);
+
+                            $("#output_table").show();
+                            showBar();
+                        }else{
+                            bootbox.alert({
+                                title: '错误',
+                                message: '解析过程出现错误！',
+                                callback: function () {}
+                            });
+                        }
+
+//                    $("#emotion_img").attr("src", img_arr[data.result]);
+//                    $("#result").slideDown(3000)
+//                    $("#emotion_img").fadeIn(3000); //毫秒
+//                    $("#emotion_img").show();
+                    },
+                    error: function() {
+                        bootbox.alert({
+                            title: '错误',
+                            message: '解析过程出现错误！',
+                            callback: function () {}
+                        });
+                    },
+                    complete: function () {
+                        $("#prog").css("width", "100%").text("100%");
+                        setTimeout(function(){}, 300); //暂停0.3秒
+                        $(".progress").hide();
+                        $("#parseBtn").removeAttr("disabled");
+                        $("#parseBtn").html('<i class="fas fa-arrow-down"></i>分 析<i class="fas fa-arrow-down"></i>');
+                    }
+                });
+            }
+
+            function file_parse(){
+                if(uploaded == false){
+//                    alert($("#uploadFile").prop('files').length);
+                    bootbox.alert({
+                        title: '提醒',
+                        message: '请上传文件！',
+                        callback: function () {}
+                    });
+                    return;
+                }
+                //方式1：
+//                var files = $("#uploadFile").prop('files');
+//                var file_data = new FormData();
+//                file_data.append('file', files[0]);
+                //方式2：
+//                var file_data = new FormData($('#fileForm')[0]);
+                $.ajax({
+                    url: "/file_parse",
+                    type: "POST",
+                    cache: false,
+//                    data: file_data,
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    beforeSend: function(){  //防止重复提交，提高用户体验
+                        uploaded = false;
+                        $("#parseBtn").html('请稍等...');
+                        $("#parseBtn").attr("disabled", "disabled");
+                        $(".progress").show();
+                        increment();
+                    },
+                    success: function(data){
+                        if (data.statusCode == 400){
+                            var totalPages = data.respData.totalPages;
+                            if(totalPages > 1){
+                                $("#myPaginator").show();
+                            }
+                            setPage(1, totalPages);
+                            fill_table(data.respData.pageData, 1);
+
+                            $("#output_table").show();
+                            showPie();
+                            show_wordCloud();
+                        }else{
+                            bootbox.alert({
+                                title: '警告',
+                                message: '你尚未上传文件！',
+                                callback: function () {}
+                            });
+                        }
+                    },
+                    error: function(){
+                        bootbox.alert({
+                            title: '错误',
+                            message: '解析过程出现错误！',
+                            callback: function () {}
+                        });
+                    },
+                    complete: function(){
+                        $("#prog").css("width", "100%").text("100%");
+                        setTimeout(function(){}, 300); //暂停0.3秒
+                        $(".progress").hide();
+
+                        $("#parseBtn").removeAttr("disabled");
+                        $("#parseBtn").html('<i class="fas fa-arrow-down"></i>分 析<i class="fas fa-arrow-down"></i>');
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <header class="header" style="border-bottom: 1px solid #eee">
+        <nav class="navbar navbar-expand-md bg-light navbar-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="img/brand.png" alt="Logo" style="width:64px;">
+                    <span class="navbar-text">电商评论情感分析平台SAP</span>
+                </a>
+                <!-- Toggler/collapsibe Button -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">首页</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/parse">在线演示</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">在线文档</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">常见问题</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" target="_blank">下载</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://github.com/ncuwlz/Design-of-Sentiment-Analysis-Platform-Based-on-LSTM-e-commerce-Remarks" target="_blank">Github</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/review">评论管理</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="breadcrumb" style="background-color: #4e555b;color: #fff;padding: 25px 0;margin-bottom: 50px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-4 ">
+                    <h2>在线演示</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: 50px;margin-bottom: 100px;">
+        <div id="demo">
+            <ul class="nav nav-tabs nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#text_pane"><i class="fas fa-font">文本输入</i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#file_pane"><i class="fas fa-file-alt">文件上传</i></a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="text_pane" class="card tab-pane active">
+                    <textarea name="content" id="remarks" rows="10" cols="30" placeholder="输入电商评论文本....." class="form-control"></textarea>
+                </div>
+                <div id="file_pane" class="card tab-pane fade">
+                    <form id="fileForm" enctype="multipart/form-data">
+                        <input type="file" class="file-loading" id="uploadFile" name="file" data-theme="fas" data-show-preview="true">
+                    </form>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="button" id="parseBtn" class="btn btn-primary btn-block"><i class="fas fa-arrow-down"></i>分 析<i class="fas fa-arrow-down"></i></button>
+            </div>
+            <div class="progress" style="margin-top: 20px;">
+                <div id="prog" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width:0;"></div>
+            </div>
+            <div style="margin-top: 20px;min-height: 500px;">
+                <div class="card" id="output_table">
+                    <div class="card-header">
+                        <h6 align="center"><i class="fas fa-chart-line"></i>结果分析</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#show_table"><i class="fas fa-table">表格</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#show_bar"><i class="fas fa-chart-bar">柱状图</i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#show_cloud"><i class="fas fa-cloud">关键词</i></a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="show_table" class="container tab-pane active" style="padding-top: 10px">
+                                <a href="/file_download" class="btn btn-info btn-block"><i class="fas fa-download">保存到本地</i></a>
+                                <table id="table" class="table table-hover table-bordered" style="text-align: center;">
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>评论</th>
+                                        <th>极性</th>
+                                        <th>表情</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="t_body"></tbody>
+                                </table>
+                                <div class="d-flex justify-content-center"><ul id="myPaginator"></ul></div>
+                            </div>
+                            <div id="show_bar" class="container tab-pane fade" style="width: 550px; height: 400px; padding-top: 10px;"></div>
+                            <div id="show_cloud" class="container tab-pane fade" style="width: 500px; height: 500px; padding-top: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--==========================
+        Footer
+      ============================-->
+    <footer class="footer" style="background-color: #2a2c30;">
+        <div class="copyrights" style="text-align: center;padding: 30px;color: #fff">
+            <div class="container">
+                <p>&copy; Copyrights SAP. All rights reserved.</p>
+                <div class="credits">
+                    Designed by 南昌大学软件学院吴林志
+                </div>
+                <p>(请使用IE9或更高版本的浏览器访问该系统)</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+</body>
+</html>

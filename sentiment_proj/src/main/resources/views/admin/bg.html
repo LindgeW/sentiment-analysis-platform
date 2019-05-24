@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>管理员后台</title>
+		<!--Favicon -->
+		<link rel="icon" href="/img/favicon.ico" type="image/x-icon"/>
+		<!--Bootstrap.min css-->
+		<link rel="stylesheet" href="/css/bootstrap.min.css">
+		<!--Icons css-->
+		<link rel="stylesheet" href="/css/bg/icons.css">
+        <!--Style css-->
+		<link rel="stylesheet" href="/css/bg/style.css">
+		<!--mCustomScrollbar css-->
+		<link rel="stylesheet" href="/css/plugins/jquery.mCustomScrollbar.css">
+        <!--Sidemenu css-->
+		<link rel="stylesheet" href="/css/plugins/sidemenu.css">
+
+		<script>
+//            function changeHeight() {
+//                var iframe = document.getElementById("iframe");
+////                var win = iframe.contentWindow;  // 通过contentWindow获取ifame子页面的window窗体对象。(不允许跨域名访问)
+//                var winDoc = iframe.contentDocument;
+//                alert(123);
+////                iframe.height = win.document.body.scrollHeight;
+//                iframe.height = winDoc.body.scrollHeight;
+//            }
+
+            var timeIframe = null;
+            window.onload = function() {
+                if (timeIframe != null){
+                    clearTimeout(timeIframe);
+                }
+
+                timeIframe = setTimeout(GetIframeStatus, 300);
+            };
+
+            function GetIframeStatus() {
+                var iframe = document.getElementById("iframe");
+                var iframeWindow = iframe.contentWindow;
+                //内容是否加载完
+                if (iframeWindow.document.readyState == "complete") {
+                    var iframeHeight;
+                    //获取Iframe的内容实际高度
+//                    iframeHeight = iframeWindow.document.documentElement.scrollHeight;
+                    iframeHeight = iframeWindow.document.body.scrollHeight;
+                    //设置Iframe的高度
+                    iframe.height = iframeHeight;
+                }
+
+                timeIframe = setTimeout(GetIframeStatus, 300);
+            }
+        </script>
+	</head>
+
+	<body class="app ">
+		<div id="spinner"></div>
+		<div id="app">
+			<div class="main-wrapper" >
+				<nav class="navbar navbar-expand-lg main-navbar">
+                    <a class="header-brand" href="#">
+						<img src="/img/logo.png" class="header-brand-img" alt="Admin logo">
+						SAP-后台管理
+					</a>
+
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link nav-link-lg full-screen-link">
+                                    <i class="ion-arrow-expand" id="fullscreen-button"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-lg" href="/index"><i class="fa fa-home"></i>首页</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-lg" href="/logout"><i class="fa fa-sign-out"></i>安全退出</a>
+                            </li>
+                        </ul>
+                    </div>
+				</nav>
+
+				<aside class="app-sidebar">
+					<div class="app-sidebar__user">
+					    <div class="dropdown">
+							<a class="nav-link pl-2 pr-2 leading-none d-flex" data-toggle="dropdown" href="#">
+								<img alt="image" src="/img/admin.gif" class=" avatar-md rounded-circle">
+								<span class="ml-2 d-lg-block">
+									<span class="text-white app-sidebar__user-name mt-5">Admin</span><br>
+									<span class="text-muted app-sidebar__user-name text-sm"> 系统管理员</span>
+								</span>
+							</a>
+						</div>
+					</div>
+					<ul class="side-menu">
+						<li>
+							<a class="side-menu__item" href="/admin/index" target="right"><i class="side-menu__icon fa fa-home"></i><span class="side-menu__label">首页</span></a>
+						</li>
+						<li class="slide">
+							<a class="side-menu__item"  data-toggle="slide" href="#"><i class="side-menu__icon fa fa-user"></i><span class="side-menu__label">账户管理</span><i class="angle fa fa-angle-right"></i></a>
+							<ul class="slide-menu">
+								<li><a class="slide-item" href="/admin/alter_pwd" target="right"><span>修改密码</span></a></li>
+							</ul>
+						</li>
+						<li>
+							<a class="side-menu__item" href="/admin/review" target="right"><i class="side-menu__icon fa fa-comment"></i><span class="side-menu__label">评论管理</span></a>
+						</li>
+						<li class="slide">
+							<a class="side-menu__item" data-toggle="slide" href="#"><i class="side-menu__icon fa fa-server"></i><span class="side-menu__label">IP管理</span><i class="angle fa fa-angle-right"></i></a>
+							<ul class="slide-menu">
+								<li><a href="/admin/host" target="right" class="slide-item"> 设置服务器IP</a></li>
+							</ul>
+						</li>
+						<li class="slide">
+							<a class="side-menu__item" data-toggle="slide" href="#"><i class="side-menu__icon fa fa-database"></i><span class="side-menu__label">资源管理</span><i class="angle fa fa-angle-right"></i></a>
+							<ul class="slide-menu">
+								<li><a href="/admin/resources" target="right" class="slide-item"> 上传资源</a></li>
+							</ul>
+						</li>
+					</ul>
+				</aside>
+
+				<div class="app-content">
+					<section class="section">
+                    	<!--<ol class="breadcrumb">-->
+                            <!--<li class="breadcrumb-item"><a href="/admin/index" target="right" class="text-muted">首页</a></li>-->
+                            <!--<li class="breadcrumb-item active text-" aria-current="page">评论管理</li>-->
+                        <!--</ol>-->
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="mb-0">
+                                        <div class="card-body">
+                                            <!--<iframe src="/login" id="iframe" name="right" width="100%" height="100%" frameborder="0" onload="this.height=right.document.body.scrollHeight"></iframe>-->
+                                            <iframe src="/admin/index" id="iframe" name="right" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+					</section>
+				</div>
+
+				<footer class="main-footer">
+					<div class="text-center">
+						Copyright &copy; NCU 2019. Design By 南昌大学软件学院吴林志
+					</div>
+				</footer>
+
+			</div>
+		</div>
+
+		<!--Jquery.min js-->
+		<script src="/js/jquery-3.3.1.min.js"></script>
+		<!--popper js-->
+		<script src="/js/popper.js"></script>
+		<!--Tooltip js-->
+		<script src="/js/tooltip.js"></script>
+		<!--Bootstrap.min js-->
+		<script src="/js/bootstrap.min.js"></script>
+		<!--Jquery.nicescroll.min js-->
+		<script src="/js/plugins/jquery.nicescroll.min.js"></script>
+		<!--Scroll-up-bar.min js-->
+		<script src="/js/plugins/scroll-up-bar.min.js"></script>
+		<!--Sidemenu js-->
+		<script src="/js/plugins/sidemenu.js"></script>
+		<!--mCustomScrollbar js-->
+		<script src="/js/plugins/jquery.mCustomScrollbar.concat.min.js"></script>
+		<!-- ECharts -->
+		<script src="/js/echarts.js"></script>
+		<!--Scripts js-->
+		<script src="/js/scripts.js"></script>
+		<!--Dashboard js-->
+		<script src="/js/dashboard.js"></script>
+		<script src="/js/apexcharts.js"></script>
+	</body>
+</html>

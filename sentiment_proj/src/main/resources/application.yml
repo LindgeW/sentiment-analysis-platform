@@ -1,0 +1,34 @@
+server:
+  port: 8800
+
+spring:
+  thymeleaf:
+    prefix: classpath:/views/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+    servlet:
+      content-type: text/html
+  servlet:
+    multipart:
+      max-file-size: 10MB #限制单个文件大小
+      max-request-size: 100MB #限制总上传数据大小
+  data:
+    mongodb:
+#      uri: mongodb://localhost:27017
+      host: localhost
+      port: 27017
+      database: wlz
+  datasource:
+    url: jdbc:mysql://localhost:3306/bishe_db?useSSL=false&serverTimezone=GMT%2B8&characterEncoding=utf-8
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: ncu151568
+  main:
+    allow-bean-definition-overriding: true
+mybatis:
+    #mybatis mapper文件的位置
+    mapper-locations: classpath:mapping/*Mapper.xml
+    #扫描pojo类的位置,在此处指明扫描实体类的包
+    type-aliases-package: com.sentiment.web.entity

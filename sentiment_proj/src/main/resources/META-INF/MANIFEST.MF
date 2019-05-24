@@ -1,0 +1,55 @@
+Manifest-Version: 1.0
+Class-Path: xalan-2.7.2.jar phantomjsdriver-1.2.0.jar commons-beanutil
+ s-1.8.3.jar tomcat-embed-el-9.0.16.jar spring-boot-starter-jdbc-2.1.3
+ .RELEASE.jar log4j-to-slf4j-2.11.2.jar HikariCP-3.2.0.jar websocket-c
+ ommon-9.4.14.v20181114.jar jackson-databind-2.9.8.jar tomcat-embed-co
+ re-9.0.16.jar spring-boot-devtools-2.1.3.RELEASE.jar spring-data-comm
+ ons-2.1.5.RELEASE.jar commons-codec-1.11.jar jetty-util-9.4.14.v20181
+ 114.jar commons-lang3-3.7.jar mybatis-spring-boot-autoconfigure-1.3.2
+ .jar selenium-remote-driver-3.14.0.jar mongodb-driver-3.8.2.jar sprin
+ g-jdbc-5.1.5.RELEASE.jar logback-core-1.2.3.jar spring-expression-5.1
+ .5.RELEASE.jar webbit-0.4.14.jar spring-webmvc-5.1.5.RELEASE.jar myba
+ tis-3.4.6.jar spring-boot-2.1.3.RELEASE.jar serializer-2.7.2.jar sele
+ nium-chrome-driver-3.14.0.jar jedis-2.9.1.jar spring-boot-starter-web
+ -2.1.3.RELEASE.jar commons-collections-3.2.2.jar thymeleaf-spring5-3.
+ 0.11.RELEASE.jar bson-3.8.2.jar spring-aop-5.1.5.RELEASE.jar selenium
+ -htmlunit-driver-2.41.0.jar spring-boot-starter-data-mongodb-2.1.3.RE
+ LEASE.jar selenium-safari-driver-3.14.0.jar shiro-core-1.3.2.jar http
+ core-4.4.11.jar commons-pool2-2.6.1.jar mongodb-driver-core-3.8.2.jar
+  spring-boot-starter-json-2.1.3.RELEASE.jar classmate-1.4.0.jar xsoup
+ -0.3.1.jar unbescape-1.1.6.RELEASE.jar snakeyaml-1.23.jar jsoup-1.10.
+ 3.jar jackson-core-2.9.8.jar okio-1.14.1.jar commons-logging-1.2.jar 
+ httpmime-4.5.7.jar json-path-2.4.0.jar selenium-firefox-driver-3.14.0
+ .jar error_prone_annotations-2.1.3.jar spring-boot-starter-logging-2.
+ 1.3.RELEASE.jar j2objc-annotations-1.1.jar jackson-datatype-jdk8-2.9.
+ 8.jar commons-exec-1.3.jar spring-beans-5.1.5.RELEASE.jar htmlunit-co
+ re-js-2.33.jar thymeleaf-extras-java8time-3.0.3.RELEASE.jar shiro-spr
+ ing-1.3.2.jar commons-text-1.4.jar jackson-module-parameter-names-2.9
+ .8.jar byte-buddy-1.9.10.jar log4j-1.2.17.jar selenium-support-3.14.0
+ .jar accessors-smart-1.2.jar spring-boot-starter-2.1.3.RELEASE.jar th
+ ymeleaf-3.0.11.RELEASE.jar spring-jcl-5.1.5.RELEASE.jar spring-boot-s
+ tarter-tomcat-2.1.3.RELEASE.jar selenium-api-3.14.0.jar mysql-connect
+ or-java-5.1.46.jar webmagic-selenium-0.7.3.jar hibernate-validator-6.
+ 0.14.Final.jar spring-tx-5.1.5.RELEASE.jar websocket-client-9.4.14.v2
+ 0181114.jar spring-core-5.1.5.RELEASE.jar xml-apis-1.4.01.jar mybatis
+ -spring-1.3.2.jar mybatis-spring-boot-starter-1.3.2.jar selenium-ie-d
+ river-3.14.0.jar httpclient-4.5.7.jar jboss-logging-3.3.2.Final.jar n
+ eko-htmlunit-2.33.jar jackson-datatype-jsr310-2.9.8.jar webmagic-core
+ -0.7.3.jar jetty-http-9.4.14.v20181114.jar netty-3.5.2.Final.jar asse
+ rtj-core-3.11.1.jar spring-boot-starter-thymeleaf-2.1.3.RELEASE.jar j
+ etty-io-9.4.14.v20181114.jar javax.annotation-api-1.3.2.jar jetty-cli
+ ent-9.4.14.v20181114.jar selenium-java-2.41.0.jar validation-api-2.0.
+ 1.Final.jar jsr305-1.3.9.jar websocket-api-9.4.14.v20181114.jar sprin
+ g-data-mongodb-2.1.5.RELEASE.jar checker-compat-qual-2.0.0.jar guava-
+ 25.0-jre.jar spring-context-5.1.5.RELEASE.jar mybatis-generator-core-
+ 1.3.7.jar slf4j-api-1.7.25.jar spring-web-5.1.5.RELEASE.jar animal-sn
+ iffer-annotations-1.14.jar shiro-web-1.3.2.jar tomcat-embed-websocket
+ -9.0.16.jar logback-classic-1.2.3.jar json-smart-2.3.jar commons-io-1
+ .3.2.jar jetty-xml-9.4.14.v20181114.jar htmlunit-cssparser-1.2.0.jar 
+ jackson-annotations-2.9.0.jar jul-to-slf4j-1.7.25.jar spring-boot-aut
+ oconfigure-2.1.3.RELEASE.jar log4j-api-2.11.2.jar okhttp-3.10.0.jar h
+ tmlunit-2.33.jar attoparser-2.0.5.RELEASE.jar webmagic-extension-0.7.
+ 3.jar fastjson-1.2.28.jar asm-5.0.4.jar commons-net-3.6.jar xercesImp
+ l-2.12.0.jar
+Main-Class: com.sentiment.web.SentimentWebApplication
+
