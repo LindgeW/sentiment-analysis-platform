@@ -7,7 +7,7 @@
  + Python服务: Python3、Flask
  + 模型：LSTM+Keras+TensorFlow
  + 爬虫：selenium
- 
+ ![](sentiment_proj/img/crawler.png)
 ---
 
 ![](sentiment_proj/img/structure.png)
