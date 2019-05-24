@@ -6,11 +6,7 @@
  + Python服务: Python3、Flask
  + 模型：LSTM+Keras+TensorFlow
  + 爬虫：selenium
- 
 ---
-
-![](sentiment_proj/img/structure.png"系统核心")
-
+![](sentiment_proj/img/structure.png)
 ---
-
-![](sentiment_proj/img/system.png"系统架构")
+![](sentiment_proj/img/system.png)
