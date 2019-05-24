@@ -9,8 +9,8 @@
  
 ---
 
-![](sentiment_proj/img/structure.png "系统核心")
+![](sentiment_proj/img/structure.png"系统核心")
 
 ---
 
-![](sentiment_proj/img/system.png "系统架构")
+![](sentiment_proj/img/system.png"系统架构")
