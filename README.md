@@ -6,7 +6,7 @@
  + Java后台：SpringBoot
  + Python服务: Python3、Flask
  + 数据库：MySQL、MongoDB
- + 模型：LSTM+Keras+TensorFlow
+ + 模型框架：Keras+TensorFlow
  + 爬虫：selenium 
 ---
 
