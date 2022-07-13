@@ -1,5 +1,5 @@
-# sentiment-analysis-platform
-基于LSTM的电商评论情感分析平台
+# Sentiment Analysis Platform
+电商评论情感分析平台
 
 ## 技术要点：
  + Java前端：Bootstrap4、jQuery
